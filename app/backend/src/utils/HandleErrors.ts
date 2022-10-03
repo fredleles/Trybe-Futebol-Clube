@@ -9,8 +9,8 @@ const HandleErrors: ErrorRequestHandler = (
 ) => {
   if (err instanceof CustomError) {
     res.status(err.code).send(err.message);
-  } else {
-    res.status(500).send('Invalid');
+  } else if(err instanceof Error) {
+    res.status(500).send(err.message);
   }
 };
 
