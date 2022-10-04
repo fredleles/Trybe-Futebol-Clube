@@ -8,6 +8,7 @@ import User from '../database/models/User';
 import mocks from './mocks/userMocks';
 
 import { Response } from 'superagent';
+import TokenHandler from '../utils/TokenHandler';
 
 chai.use(chaiHttp);
 
@@ -19,6 +20,7 @@ describe('Login test', () => {
 
   after(()=>{
     (User.findOne as sinon.SinonStub).restore();
+    (TokenHandler.Verify as sinon.SinonStub).restore();
   })
 
   it('Tests if the response gets a token with a valid user', async () => {
@@ -102,5 +104,30 @@ describe('Login test', () => {
 
     expect(chaiHttpResponse.status).to.be.eq(400);
     expect(chaiHttpResponse.body.message).to.eq('All fields must be filled');
+  });
+  
+  it('Tests if the response gets the right role with a valid token', async () => {
+    sinon
+      .stub(TokenHandler, "Verify")
+      .resolves(mocks.loggedUser);
+
+    chaiHttpResponse = await chai
+      .request(app)
+      .get('/login/validate')
+      .set('Authorization', 'token')
+      .send();
+
+    expect(chaiHttpResponse.status).to.be.eq(200);
+    expect(chaiHttpResponse.body.role).to.eq('user');
+  });
+  
+  it('Tests if the response gets an error message when requested without a token', async () => {
+    chaiHttpResponse = await chai
+      .request(app)
+      .get('/login/validate')
+      .send();
+
+    expect(chaiHttpResponse.status).to.be.eq(401);
+    expect(chaiHttpResponse.body.message).to.eq('Token is mandatory');
   });
 });
