@@ -3,9 +3,10 @@ import User from '../database/models/User';
 import IUser from '../models/IUser';
 import CryptHandler from '../utils/CryptHandler';
 import TokenHandler from '../utils/TokenHandler';
+import ILoggedUser from '../models/ILoggedUser';
 
 export default class UserServices {
-  private tokenData = {};
+  private payload: ILoggedUser;
 
   async ValidateLogin(user: IUser) {
     const { email, password } = user;
@@ -20,11 +21,19 @@ export default class UserServices {
       throw new CustomError(401, 'Incorrect email or password');
     }
 
-    this.tokenData = {
+    this.payload = {
       id: userDB.id,
-      username: userDB.username,
       email: userDB.email,
+      username: userDB.username,
+      role: userDB.role,
     };
-    return TokenHandler.Sign(this.tokenData);
+    
+    return TokenHandler.Sign(this.payload);
+  }
+
+  ValidateToken(token: string | undefined) {
+    if (!token) throw new CustomError(401, 'Token is mandatory');
+    const { role } = TokenHandler.Verify(token) as ILoggedUser;
+    return role;
   }
 }

@@ -11,4 +11,11 @@ export default class UserController {
     const token = await this.service.ValidateLogin(user);
     res.status(200).send({ token });
   }
+
+  Validate(req: Request, res: Response) {
+    this.service = new UserServices();
+    const { authorization } = req.headers;
+    const role = this.service.ValidateToken(authorization);
+    res.status(200).send({ role });
+  }
 }
