@@ -29,7 +29,7 @@ describe('Matches test', () => {
   
       chaiHttpResponse = await chai
           .request(app)
-          .get('/match')
+          .get('/matches')
           .send();
   
       expect(chaiHttpResponse.status).to.be.eq(200);
@@ -37,7 +37,43 @@ describe('Matches test', () => {
     });
   });
 
-  describe('', () => {});
+  describe('Test the verb GET at /matches with filters', () => {
 
-  describe('', () => {});
+    let chaiHttpResponse: Response;
+    before(() => {
+      sinon.stub(Match, 'findAll').resolves(mocks.inProgressMatches);
+    });
+  
+    after(()=>{
+      (Match.findAll as sinon.SinonStub).restore();
+    });
+  
+    it('Tests the route with a query equal inProgress=true', async () => {
+  
+      chaiHttpResponse = await chai
+          .request(app)
+          .get('/matches?inProgress=true')
+          .send();
+  
+      expect(chaiHttpResponse.status).to.be.eq(200);
+      expect(chaiHttpResponse.body).to.be.deep.eq(mocks.inProgressMatches);
+    });
+
+  });
+
+  describe('Test the verb GET at /matches with an invalid inProgress filter', () => {
+
+    let chaiHttpResponse: Response;
+  
+    it('Tests the route with a query equal inProgress=invalid', async () => {
+  
+      chaiHttpResponse = await chai
+          .request(app)
+          .get('/matches?inProgress=invalid')
+          .send();
+  
+      expect(chaiHttpResponse.status).to.be.eq(500);
+      expect(chaiHttpResponse.body.message).to.be.deep.eq('InProgress mmust be true or false');
+    });
+  });
 });
