@@ -8,6 +8,7 @@ import User from '../database/models/User';
 import mocks from './mocks/userMocks';
 
 import { Response } from 'superagent';
+import TokenHandler from '../utils/TokenHandler';
 
 chai.use(chaiHttp);
 
@@ -145,6 +146,7 @@ describe('Login test', () => {
     let chaiHttpResponse: Response;
     before(() => {
       sinon.stub(User, 'findOne').resolves(mocks.validUser);
+      sinon.stub(TokenHandler, 'Verify').resolves({ id: 2 })
     });
   
     after(()=>{

@@ -8,9 +8,9 @@ const HandleErrors: ErrorRequestHandler = (
   _next: NextFunction,
 ) => {
   if (err instanceof CustomError) {
-    res.status(err.code).send(err.message);
+    res.status(err.code).send({ message: err.message });
   } else if (err instanceof Error) {
-    res.status(500).send(err.message);
+    res.status(500).send({ message: err.message });
   }
 };
 
