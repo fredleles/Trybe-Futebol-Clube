@@ -6,7 +6,6 @@ import TokenHandler from '../utils/TokenHandler';
 import ILoggedUser from '../models/ILoggedUser';
 
 export default class UserServices {
-  private payload: ILoggedUser;
   private tokenHandler = TokenHandler;
 
   async ValidateLogin(user: IUser) {
@@ -22,19 +21,20 @@ export default class UserServices {
       throw new CustomError(401, 'Incorrect email or password');
     }
 
-    this.payload = {
+    const payload = {
       id: userDB.id,
       email: userDB.email,
       username: userDB.username,
       role: userDB.role,
     };
 
-    return TokenHandler.Sign(this.payload);
+    return this.tokenHandler.Sign(payload);
   }
 
-  ValidateToken(token: string | undefined) {
+  async ValidateToken(token: string | undefined) {
     if (!token) throw new CustomError(401, 'Token is mandatory');
-    const { role } = this.tokenHandler.Verify(token) as ILoggedUser;
-    return role;
+    const { id } = this.tokenHandler.Verify(token) as ILoggedUser;
+    const userDB = await User.findOne({ where: { id } });
+    return userDB?.role;
   }
 }

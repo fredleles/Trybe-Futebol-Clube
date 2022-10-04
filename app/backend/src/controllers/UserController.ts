@@ -12,10 +12,10 @@ export default class UserController {
     res.status(200).send({ token });
   }
 
-  Validate(req: Request, res: Response) {
+  async Validate(req: Request, res: Response) {
     this.service = new UserServices();
     const { authorization } = req.headers;
-    const role = this.service.ValidateToken(authorization);
+    const role = await this.service.ValidateToken(authorization);
     res.status(200).send({ role });
   }
 }
