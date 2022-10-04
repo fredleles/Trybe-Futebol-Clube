@@ -7,6 +7,7 @@ import ILoggedUser from '../models/ILoggedUser';
 
 export default class UserServices {
   private payload: ILoggedUser;
+  private tokenHandler = TokenHandler;
 
   async ValidateLogin(user: IUser) {
     const { email, password } = user;
@@ -27,13 +28,13 @@ export default class UserServices {
       username: userDB.username,
       role: userDB.role,
     };
-    
+
     return TokenHandler.Sign(this.payload);
   }
 
   ValidateToken(token: string | undefined) {
     if (!token) throw new CustomError(401, 'Token is mandatory');
-    const { role } = TokenHandler.Verify(token) as ILoggedUser;
+    const { role } = this.tokenHandler.Verify(token) as ILoggedUser;
     return role;
   }
 }

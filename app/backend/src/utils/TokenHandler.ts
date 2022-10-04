@@ -6,6 +6,6 @@ export default class TokenHandler {
   }
 
   public static Verify(token: string) : jwt.JwtPayload | string {
-    return jwt.verify(token, process.env.JWT_SECRET as string);   
+    return jwt.verify(token, process.env.JWT_SECRET as string);
   }
 }
