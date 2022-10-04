@@ -58,7 +58,7 @@ describe('Login test', () => {
   it('Tests if the response gets a error message with an invalid password', async () => {
     sinon
       .stub(User, "findOne")
-      .resolves(undefined);
+      .resolves(mocks.validUser);
 
     chaiHttpResponse = await chai
         .request(app)
@@ -70,5 +70,37 @@ describe('Login test', () => {
 
     expect(chaiHttpResponse.status).to.be.eq(401);
     expect(chaiHttpResponse.body.message).to.eq('Incorrect email or password');
+  });
+  
+  it('Tests if the response gets a error message with a request without email', async () => {
+    sinon
+      .stub(User, "findOne")
+      .resolves(mocks.validUser);
+
+    chaiHttpResponse = await chai
+        .request(app)
+        .post('/login')
+        .send({
+        email: 'user@user.com',
+      });
+
+    expect(chaiHttpResponse.status).to.be.eq(400);
+    expect(chaiHttpResponse.body.message).to.eq('All fields must be filled');
+  });
+  
+  it('Tests if the response gets a error message with a request without password', async () => {
+    sinon
+      .stub(User, "findOne")
+      .resolves(mocks.validUser);
+
+    chaiHttpResponse = await chai
+        .request(app)
+        .post('/login')
+        .send({
+        password: 'secret_invalid',
+      });
+
+    expect(chaiHttpResponse.status).to.be.eq(400);
+    expect(chaiHttpResponse.body.message).to.eq('All fields must be filled');
   });
 });
