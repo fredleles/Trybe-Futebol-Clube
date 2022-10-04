@@ -4,8 +4,8 @@ import UserController from './UserController';
 
 const router = Router();
 
-router.post('/login', validateLogin, new UserController().Login);
-router.get('/login/validate', new UserController().Validate);
+router.post('/login', validateLogin, UserController.Login);
+router.get('/login/validate', UserController.Validate);
 router.all('*', () => { throw new Error(); });
 
 export default router;

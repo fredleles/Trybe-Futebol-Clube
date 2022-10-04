@@ -5,10 +5,10 @@ import CryptHandler from '../utils/CryptHandler';
 import TokenHandler from '../utils/TokenHandler';
 import ILoggedUser from '../models/ILoggedUser';
 
-export default class UserServices {
+class UserServices {
   private tokenHandler = TokenHandler;
 
-  async ValidateLogin(user: IUser) {
+  ValidateLogin = async (user: IUser) => {
     const { email, password } = user;
 
     const userDB = await User.findOne({ where: { email } });
@@ -29,12 +29,13 @@ export default class UserServices {
     };
 
     return this.tokenHandler.Sign(payload);
-  }
+  };
 
-  async ValidateToken(token: string | undefined) {
+  ValidateToken = async (token: string | undefined) => {
     if (!token) throw new CustomError(401, 'Token is mandatory');
     const { id } = this.tokenHandler.Verify(token) as ILoggedUser;
     const userDB = await User.findOne({ where: { id } });
     return userDB?.role;
-  }
+  };
 }
+export default new UserServices();

@@ -1,5 +1,6 @@
 import * as express from 'express';
-import 'express-async-errors';
+// import 'express-async-errors';
+import * as cors from 'cors';
 import router from './controllers/routes';
 import HandleErrors from './utils/HandleErrors';
 
@@ -13,6 +14,7 @@ class App {
 
     // Não remover essa rota
     this.app.get('/', (req, res) => res.json({ ok: true }));
+    this.app.use(router);
     this.app.use(HandleErrors);
   }
 
@@ -26,7 +28,7 @@ class App {
 
     this.app.use(express.json());
     this.app.use(accessControl);
-    this.app.use(router);
+    this.app.use(cors());
   }
 
   public start(PORT: string | number):void {

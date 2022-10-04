@@ -146,11 +146,12 @@ describe('Login test', () => {
     let chaiHttpResponse: Response;
     before(() => {
       sinon.stub(User, 'findOne').resolves(mocks.validUser);
-      sinon.stub(TokenHandler, 'Verify').resolves({ id: 2 })
+      sinon.stub(TokenHandler, 'Verify').resolves(mocks.loggedUser);
     });
   
     after(()=>{
       (User.findOne as sinon.SinonStub).restore();
+      (TokenHandler.Verify as sinon.SinonStub).restore();
     });
 
     it('Tests if the response gets the right role with a valid token', async () => {
