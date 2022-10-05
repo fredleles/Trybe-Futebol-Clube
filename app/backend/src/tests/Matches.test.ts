@@ -121,4 +121,109 @@ describe('Matches test', () => {
       expect(chaiHttpResponse.body.message).to.be.deep.eq('Token must be a valid token');
     });
   });
+
+  describe('Tests the verb PATCH at /matches', () => {
+    let chaiHttpResponse: Response;
+    before(() => {
+      sinon.stub(Match, 'update').resolves();
+      sinon.stub(TokenHandler, 'Verify').resolves(); 
+    });
+  
+    after(()=>{
+      (Match.update as sinon.SinonStub).restore();
+      (TokenHandler.Verify as sinon.SinonStub).restore();
+    });
+    
+    it('Tests if a score update is possible', async () => {
+      sinon.stub(Match, 'findOne').resolves({ id: 1, inProgress: true } as Match);
+  
+      chaiHttpResponse = await chai
+          .request(app)
+          .patch('/matches/1')
+          .set('Authorization', 'token')
+          .send({
+            homeTeamGoals: 3,
+            awayTeamGoals: 2
+          });
+  
+      expect(chaiHttpResponse.status).to.be.eq(200);
+      expect(chaiHttpResponse.body.message).to.be.deep.eq('Updated');
+      (Match.findOne as sinon.SinonStub).restore();
+    });
+    
+    it('Tests if a score update is possible without an id', async () => {
+  
+      chaiHttpResponse = await chai
+          .request(app)
+          .patch('/matches')
+          .set('Authorization', 'token')
+          .send({
+            homeTeamGoals: 3,
+            awayTeamGoals: 2
+          });
+  
+      expect(chaiHttpResponse.status).to.be.eq(500);
+      expect(chaiHttpResponse.body.message).to.be.deep.eq('Invalid request');
+    });
+    
+    it('Tests if a score update is possible with an invalid id', async () => {
+  
+      chaiHttpResponse = await chai
+          .request(app)
+          .patch('/matches/NaN')
+          .set('Authorization', 'token')
+          .send({
+            homeTeamGoals: 3,
+            awayTeamGoals: 2
+          });
+  
+      expect(chaiHttpResponse.status).to.be.eq(404);
+      expect(chaiHttpResponse.body.message).to.be.deep.eq('Id Not Found');
+    });
+    
+    it('Tests if a score update is possible with an id that doesnt exists', async () => {
+      sinon.stub(Match, 'findOne').resolves();
+  
+      chaiHttpResponse = await chai
+          .request(app)
+          .patch('/matches/1000')
+          .set('Authorization', 'token')
+          .send({
+            homeTeamGoals: 3,
+            awayTeamGoals: 2
+          });
+  
+      expect(chaiHttpResponse.status).to.be.eq(404);
+      expect(chaiHttpResponse.body.message).to.be.deep.eq('There is no match with such id!');
+      (Match.findOne as sinon.SinonStub).restore();
+    });
+    
+    it('Tests if a match can have its progress updated', async () => {
+      sinon.stub(Match, 'findOne').resolves({ id: 1, inProgress: true } as Match);
+  
+      chaiHttpResponse = await chai
+          .request(app)
+          .patch('/matches/1/finish')
+          .set('Authorization', 'token')
+          .send();
+  
+      expect(chaiHttpResponse.status).to.be.eq(200);
+      expect(chaiHttpResponse.body.message).to.be.deep.eq('Finished');
+      (Match.findOne as sinon.SinonStub).restore();
+    });
+    
+    it('Tests if a finished match can have its progress updated', async () => {
+      sinon.stub(Match, 'findOne').resolves({ id: 1, inProgress: false } as Match);
+  
+      chaiHttpResponse = await chai
+          .request(app)
+          .patch('/matches/1/finish')
+          .set('Authorization', 'token')
+          .send();
+  
+      expect(chaiHttpResponse.status).to.be.eq(401);
+      expect(chaiHttpResponse.body.message).to.be.deep.eq('Match already finished!');
+      (Match.findOne as sinon.SinonStub).restore();
+    });
+  });
 });
