@@ -6,11 +6,12 @@ import CustomError from '../models/CustomError';
 import TokenHandler from '../utils/TokenHandler';
 
 class MatchServices {
-  List = async () : Promise<IMatch[] | []> => {
+  List = async (filters: object) : Promise<IMatch[] | []> => {
     const matches = await Match.findAll({ include: [
       { model: Team, as: 'teamHome', attributes: ['teamName'] },
       { model: Team, as: 'teamAway', attributes: ['teamName'] },
     ],
+    where : { ...filters },
     }) as IMatch[];
 
     if (!matches) return [];
@@ -27,15 +28,7 @@ class MatchServices {
     const inProgress = this.convertToBool(queryInProgress);
     if (inProgress === undefined) throw new Error('InProgress must be true or false');
 
-    const matches = await Match.findAll({ include: [
-      { model: Team, as: 'teamHome', attributes: ['teamName'] },
-      { model: Team, as: 'teamAway', attributes: ['teamName'] },
-    ],
-    where: { inProgress },
-    }) as IMatch[];
-
-    if (!matches) return [];
-    return matches;
+    return this.List({ inProgress });
   };
 
   private verifyTeams = async (teamsIds: number[]) => {

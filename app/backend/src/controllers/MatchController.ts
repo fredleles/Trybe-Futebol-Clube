@@ -11,7 +11,7 @@ class MatchController {
       const { inProgress } = req.query;
       let matches;
       if (!inProgress || inProgress === '') {
-        matches = await this.service.List();
+        matches = await this.service.List({});
       } else {
         matches = await this.service.ListByProgress(inProgress.toString());
       }
