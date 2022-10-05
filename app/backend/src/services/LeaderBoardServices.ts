@@ -21,11 +21,34 @@ class LeaderBoardServices {
     })
   );
 
+  private joinList = async (team : ITeam) : Promise<IBoard> => {
+    const scores = await Promise.all([
+      this.getScore(team, { homeTeam: team.id }),
+      this.getScore(team, { awayTeam: team.id }),
+    ]);
+
+    const response : IBoard = {
+      name: team.teamName,
+      totalPoints: scores[0].totalPoints + scores[1].totalPoints,
+      totalGames: scores[0].totalGames + scores[1].totalGames,
+      totalVictories: scores[0].totalVictories + scores[1].totalVictories,
+      totalDraws: scores[0].totalDraws + scores[1].totalDraws,
+      totalLosses: scores[0].totalLosses + scores[1].totalLosses,
+      goalsFavor: scores[0].goalsFavor + scores[1].goalsFavor,
+      goalsOwn: scores[0].goalsOwn + scores[1].goalsOwn,
+      goalsBalance: scores[0].goalsBalance + scores[1].goalsBalance,
+      efficiency: (((scores[0].totalPoints + scores[1].totalPoints)
+        / ((scores[0].totalGames + scores[1].totalGames) * 3)) * 100).toFixed(2),
+    };
+    return response;
+  };
+
   List = async (type: string) => {
     const teamsList = await TeamsServices.List();
     const scorePromises = teamsList.map((team) => {
       if (type === 'home') return this.getScore(team, { homeTeam: team.id });
-      return this.getScore(team, { awayTeam: team.id }); // away
+      if (type === 'away') return this.getScore(team, { awayTeam: team.id });
+      return this.joinList(team);
     });
 
     const teamsScore = await Promise.all(scorePromises) as IBoard[];

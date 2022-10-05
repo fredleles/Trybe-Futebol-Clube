@@ -21,5 +21,14 @@ class LeaderBoardController {
       next(error);
     }
   };
+
+  GetLeadersBoard = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const board = await this.service.List('full');
+      return res.status(200).send(board);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 export default new LeaderBoardController();
