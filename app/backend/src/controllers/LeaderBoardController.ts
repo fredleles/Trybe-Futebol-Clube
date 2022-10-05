@@ -12,5 +12,14 @@ class LeaderBoardController {
       next(error);
     }
   };
+
+  GetAwayLeaders = async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const board = await this.service.List('away');
+      return res.status(200).send(board);
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 export default new LeaderBoardController();

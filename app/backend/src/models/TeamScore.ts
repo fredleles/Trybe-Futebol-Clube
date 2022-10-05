@@ -12,7 +12,7 @@ export default class TeamScore {
   private goalsFavor = 0;
   private goalsOwn = 0;
   private goalsBalance = 0;
-  private efficiency: number;
+  private efficiency: string;
 
   constructor(private team : ITeam, private matches : IMatch[]) {
     this.name = team.teamName;
@@ -21,7 +21,7 @@ export default class TeamScore {
 
     this.totalPoints = 3 * this.totalVictories + this.totalDraws;
     this.goalsBalance = this.goalsFavor - this.goalsOwn;
-    this.efficiency = parseFloat(((this.totalPoints / (this.totalGames * 3)) * 100).toFixed(2));
+    this.efficiency = ((this.totalPoints / (this.totalGames * 3)) * 100).toFixed(2);
   }
 
   private summarizeScore() {

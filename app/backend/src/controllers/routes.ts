@@ -16,6 +16,7 @@ router.post('/matches', MatchController.CreateMatch);
 router.patch('/matches/:id/finish', MatchController.UpdateInProgress);
 router.patch('/matches/:id', MatchController.UpdateScore);
 router.get('/leaderboard/home', LeaderBoardController.GetHomeLeaders);
+router.get('/leaderboard/away', LeaderBoardController.GetAwayLeaders);
 router.all('*', () => { throw new Error('Invalid request'); });
 
 export default router;
