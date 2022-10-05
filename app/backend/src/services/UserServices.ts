@@ -32,7 +32,6 @@ class UserServices {
   };
 
   ValidateToken = async (token: string | undefined) => {
-    if (!token) throw new CustomError(401, 'Token is mandatory');
     const { id } = this.tokenHandler.Verify(token) as ILoggedUser;
     const userDB = await User.findOne({ where: { id } });
     return userDB?.role;
