@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import validateLogin from '../middlewares/validateLogin';
+import LeaderBoardController from './LeaderBoardController';
 import MatchController from './MatchController';
 import TeamsController from './TeamsController';
 import UserController from './UserController';
@@ -14,6 +15,7 @@ router.get('/matches', MatchController.ListMatches);
 router.post('/matches', MatchController.CreateMatch);
 router.patch('/matches/:id/finish', MatchController.UpdateInProgress);
 router.patch('/matches/:id', MatchController.UpdateScore);
+router.get('/leaderboard/home', LeaderBoardController.GetHomeLeaders);
 router.all('*', () => { throw new Error('Invalid request'); });
 
 export default router;

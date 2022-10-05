@@ -11,7 +11,7 @@ class MatchServices {
       { model: Team, as: 'teamHome', attributes: ['teamName'] },
       { model: Team, as: 'teamAway', attributes: ['teamName'] },
     ],
-    where : { ...filters },
+    where: { ...filters },
     }) as IMatch[];
 
     if (!matches) return [];
