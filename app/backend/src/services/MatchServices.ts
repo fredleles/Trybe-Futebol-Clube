@@ -39,10 +39,12 @@ class MatchServices {
   };
 
   private verifyTeams = async (teamsIds: number[]) => {
-    if (teamsIds[0] === teamsIds[1]) throw new CustomError(
-      401,
-      'It is not possible to create a match with two equal teams',
-    );
+    if (teamsIds[0] === teamsIds[1]) {
+      throw new CustomError(
+        401,
+        'It is not possible to create a match with two equal teams',
+      );
+    }
 
     const promises = teamsIds.map((id) => TeamsServices.GetTeam(id));
     return Promise.all(promises);
@@ -53,7 +55,6 @@ class MatchServices {
     await this.verifyTeams([match.awayTeam, match.homeTeam]);
 
     const newMatch = await Match.create(match);
-    
     return newMatch;
   };
 }

@@ -12,6 +12,6 @@ export default class TokenHandler {
       return jwt.verify(token, process.env.JWT_SECRET as string);
     } catch (error) {
       throw new CustomError(401, 'Token must be a valid token');
-    }    
+    }
   }
 }

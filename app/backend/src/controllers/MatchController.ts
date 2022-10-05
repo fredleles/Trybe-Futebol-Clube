@@ -19,7 +19,7 @@ class MatchController {
       next(error);
     }
   };
-  
+
   CreateMatch = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { authorization } = req.headers;
