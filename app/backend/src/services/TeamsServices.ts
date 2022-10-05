@@ -10,6 +10,8 @@ class TeamsServices {
   };
 
   GetTeam = async (id: number) : Promise<ITeam> => {
+    if (!id) throw new CustomError(404, 'Id Not Found');
+
     const team = await Team.findOne({ where: { id } }) as ITeam;
     if (!team) throw new CustomError(404, 'There is no team with such id!');
 

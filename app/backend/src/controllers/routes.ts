@@ -12,6 +12,8 @@ router.get('/teams/:id', TeamsController.GetTeam);
 router.get('/teams', TeamsController.ListTeams);
 router.get('/matches', MatchController.ListMatches);
 router.post('/matches', MatchController.CreateMatch);
-router.all('*', () => { throw new Error(); });
+router.patch('/matches/:id/finish', MatchController.UpdateInProgress);
+router.patch('/matches/:id', MatchController.UpdateScore);
+router.all('*', () => { throw new Error('Invalid request'); });
 
 export default router;

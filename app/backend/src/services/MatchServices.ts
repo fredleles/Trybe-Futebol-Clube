@@ -57,6 +57,29 @@ class MatchServices {
     const newMatch = await Match.create(match);
     return newMatch;
   };
+
+  GetById = async (id: number) : Promise<IMatch> => {
+    if (!id) throw new CustomError(404, 'Id Not Found');
+
+    const match = await Match.findOne({ include: [
+      { model: Team, as: 'teamHome', attributes: ['teamName'] },
+      { model: Team, as: 'teamAway', attributes: ['teamName'] },
+    ],
+    where: { id },
+    }) as IMatch;
+
+    if (!match) throw new CustomError(404, 'There is no match with such id!');
+    return match;
+  };
+
+  Update = async (id: number, data : object, token: string | undefined) => {
+    TokenHandler.Verify(token);
+    const refMatch = await this.GetById(id);
+    if (refMatch.inProgress === false) throw new CustomError(401, 'Match already finished!');
+
+    const match = await Match.update(data, { where: { id } });
+    return match;
+  };
 }
 
 export default new MatchServices();
