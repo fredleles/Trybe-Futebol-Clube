@@ -48,4 +48,44 @@ const inProgressMatches = [
 	},
 ] as Match[];
 
-export default { matches, inProgressMatches };
+const validMatch = {
+  "homeTeam": 16,
+  "homeTeamGoals": 2,
+  "awayTeam": 8,
+  "awayTeamGoals": 2,
+  "inProgress": true,
+};
+
+const createdMatch = {
+  "id": 1,
+  "homeTeam": 16,
+  "homeTeamGoals": 2,
+  "awayTeam": 8,
+  "awayTeamGoals": 2,
+  "inProgress": true,
+} as Match;
+
+const eqTeamsMatch = {
+  "homeTeam": 16,
+  "homeTeamGoals": 2,
+  "awayTeam": 16,
+  "awayTeamGoals": 2,
+  "inProgress": true,
+};
+
+const invalidTeamMatch = {
+  "homeTeam": 1600,
+  "homeTeamGoals": 2,
+  "awayTeam": 16,
+  "awayTeamGoals": 2,
+  "inProgress": true,
+};
+
+export default {
+  matches,
+  inProgressMatches,
+  validMatch,
+  eqTeamsMatch,
+  invalidTeamMatch,
+  createdMatch,
+};

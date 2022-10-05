@@ -184,7 +184,7 @@ describe('Login test', () => {
         .send();
   
       expect(chaiHttpResponse.status).to.be.eq(401);
-      expect(chaiHttpResponse.body.message).to.eq('Token is mandatory');
+      expect(chaiHttpResponse.body.message).to.eq('Token must be a valid token');
     });
   });
   
