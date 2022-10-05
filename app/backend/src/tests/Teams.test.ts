@@ -14,7 +14,7 @@ chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Teams test', () => {
-  describe('/teams route', () => {
+  describe('Tests the verb GET at /teams', () => {
 
     let chaiHttpResponse: Response;
     before(() => {
@@ -38,19 +38,16 @@ describe('Teams test', () => {
 
   });
 
-  describe('/teams/:id route', () => {
+  describe('Tests the verb GET at /teams/:id', () => {
 
     let chaiHttpResponse: Response;
-    before(() => {
-      sinon.stub(Team, 'findOne').resolves(mocks.mockOneTeam);
-    });
   
-    after(()=>{
+    afterEach(()=>{
       (Team.findOne as sinon.SinonStub).restore();
     });
   
     it('Tests if the response gets a specific team from id', async () => {
-  
+      sinon.stub(Team, 'findOne').resolves(mocks.mockOneTeam);
       chaiHttpResponse = await chai
           .request(app)
           .get('/teams/1')
@@ -59,21 +56,9 @@ describe('Teams test', () => {
       expect(chaiHttpResponse.status).to.be.eq(200);
       expect(chaiHttpResponse.body).to.be.deep.eq(mocks.mockOneTeam);
     });
-  });
-
-  describe('/teams/:id route', () => {
-
-    let chaiHttpResponse: Response;
-    before(() => {
-      sinon.stub(Team, 'findOne').resolves(undefined);
-    });
-  
-    after(()=>{
-      (Team.findOne as sinon.SinonStub).restore();
-    });
-  
+    
     it('Tests if the response gets a not found message from an invalid id', async () => {
-  
+      sinon.stub(Team, 'findOne').resolves(undefined);
       chaiHttpResponse = await chai
           .request(app)
           .get('/teams/a')

@@ -15,19 +15,18 @@ chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('Login test', () => {
-  describe('Valid User', () => {
+  describe('Tests the verb POST at /login', () => {
 
     let chaiHttpResponse: Response;
     before(() => {
-      sinon.stub(User, 'findOne').resolves(mocks.validUser);
     });
   
-    after(()=>{
+    afterEach(()=>{
       (User.findOne as sinon.SinonStub).restore();
     });
   
     it('Tests if the response gets a token with a valid user', async () => {
-  
+      sinon.stub(User, 'findOne').resolves(mocks.validUser);
       chaiHttpResponse = await chai
           .request(app)
           .post('/login')
@@ -39,21 +38,9 @@ describe('Login test', () => {
       expect(chaiHttpResponse.status).to.be.eq(200);
       expect(chaiHttpResponse.body).to.have.property('token');
     });
-  });
-
-  describe('Invalid email', () => {
-
-    let chaiHttpResponse: Response;
-    before(() => {
-      sinon.stub(User, 'findOne').resolves(undefined);
-    });
-  
-    after(()=>{
-      (User.findOne as sinon.SinonStub).restore();
-    });
-
+    
     it('Tests if the response gets a error message with an invalid email', async () => {
-  
+      sinon.stub(User, 'findOne').resolves(undefined);
       chaiHttpResponse = await chai
           .request(app)
           .post('/login')
@@ -65,21 +52,9 @@ describe('Login test', () => {
       expect(chaiHttpResponse.status).to.be.eq(401);
       expect(chaiHttpResponse.body.message).to.eq('Incorrect email or password');
     });
-  });
-  
-  describe('invalid password', () => {
-
-    let chaiHttpResponse: Response;
-    before(() => {
-      sinon.stub(User, 'findOne').resolves(mocks.validUser);
-    });
-  
-    after(()=>{
-      (User.findOne as sinon.SinonStub).restore();
-    });
 
     it('Tests if the response gets a error message with an invalid password', async () => {
-  
+      sinon.stub(User, 'findOne').resolves(mocks.validUser);
       chaiHttpResponse = await chai
           .request(app)
           .post('/login')
@@ -91,21 +66,9 @@ describe('Login test', () => {
       expect(chaiHttpResponse.status).to.be.eq(401);
       expect(chaiHttpResponse.body.message).to.eq('Incorrect email or password');
     });
-  });
-  
-  describe('Invalid request body - email', () => {
-
-    let chaiHttpResponse: Response;
-    before(() => {
-      sinon.stub(User, 'findOne').resolves();
-    });
-  
-    after(()=>{
-      (User.findOne as sinon.SinonStub).restore();
-    });
 
     it('Tests if the response gets a error message with a request without email', async () => {
-  
+      sinon.stub(User, 'findOne').resolves();
       chaiHttpResponse = await chai
           .request(app)
           .post('/login')
@@ -116,20 +79,9 @@ describe('Login test', () => {
       expect(chaiHttpResponse.status).to.be.eq(400);
       expect(chaiHttpResponse.body.message).to.eq('All fields must be filled');
     });
-  });
-
-  describe('Invalid request body - password', () => {
-    let chaiHttpResponse: Response;
-    before(() => {
-      sinon.stub(User, 'findOne').resolves();
-    });
-  
-    after(()=>{
-      (User.findOne as sinon.SinonStub).restore();
-    });
 
     it('Tests if the response gets a error message with a request without password', async () => {
-  
+      sinon.stub(User, 'findOne').resolves();
       chaiHttpResponse = await chai
           .request(app)
           .post('/login')
@@ -142,20 +94,17 @@ describe('Login test', () => {
     });
   });
   
-  describe('Validate token', () => {
+  describe('Tests the verb GET at /login/validate', () => {
     let chaiHttpResponse: Response;
-    before(() => {
-      sinon.stub(User, 'findOne').resolves(mocks.validUser);
-      sinon.stub(TokenHandler, 'Verify').resolves(mocks.loggedUser);
-    });
-  
-    after(()=>{
+
+    afterEach(() => {
       (User.findOne as sinon.SinonStub).restore();
-      (TokenHandler.Verify as sinon.SinonStub).restore();
     });
 
     it('Tests if the response gets the right role with a valid token', async () => {
-  
+      sinon.stub(User, 'findOne').resolves(mocks.validUser);
+      sinon.stub(TokenHandler, 'Verify').resolves(mocks.loggedUser);
+
       chaiHttpResponse = await chai
         .request(app)
         .get('/login/validate')
@@ -164,20 +113,11 @@ describe('Login test', () => {
   
       expect(chaiHttpResponse.status).to.be.eq(200);
       expect(chaiHttpResponse.body.role).to.eq('user');
+      (TokenHandler.Verify as sinon.SinonStub).restore();
     });
-  });
-
-  describe('Not authorized', () => {
-    let chaiHttpResponse: Response;
-    before(() => {
-      sinon.stub(User, 'findOne').resolves();
-    });
-  
-    after(()=>{
-      (User.findOne as sinon.SinonStub).restore();
-    });
-
+    
     it('Tests if the response gets an error message when requested without a token', async () => {
+      sinon.stub(User, 'findOne').resolves();
       chaiHttpResponse = await chai
         .request(app)
         .get('/login/validate')
@@ -186,6 +126,18 @@ describe('Login test', () => {
       expect(chaiHttpResponse.status).to.be.eq(401);
       expect(chaiHttpResponse.body.message).to.eq('Token must be a valid token');
     });
+  });
+
+  describe('Not authorized', () => {
+    let chaiHttpResponse: Response;
+    before(() => {
+      
+    });
+  
+    after(()=>{
+      (User.findOne as sinon.SinonStub).restore();
+    });
+
   });
   
 });

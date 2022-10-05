@@ -17,7 +17,7 @@ const { expect } = chai;
 
 describe('Matches test', () => {
 
-  describe('Test the verb GET at /matches', () => {
+  describe('Tests the verb GET at /matches', () => {
 
     let chaiHttpResponse: Response;
   
@@ -59,7 +59,7 @@ describe('Matches test', () => {
     });
   });
 
-  describe('Test the verb POST at /matches', () => {
+  describe('Tests the verb POST at /matches', () => {
 
     let chaiHttpResponse: Response;
     before(() => {
