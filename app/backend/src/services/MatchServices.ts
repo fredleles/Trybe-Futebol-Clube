@@ -1,13 +1,17 @@
 import Team from '../database/models/Team';
 import Match from '../database/models/Match';
 import { IMatch, INewMatch } from '../models/IMatch';
-import TeamsServices from './TeamsServices';
 import CustomError from '../models/CustomError';
 import TokenHandler from '../utils/TokenHandler';
+import ITeamServices from './ITeamServices';
+import IMatchServices from './IMatchServices';
 
-class MatchServices {
+class MatchServices implements IMatchServices {
+  private model = Match;
+  constructor(private TeamServices : ITeamServices) {};
+
   List = async (filters: object) : Promise<IMatch[] | []> => {
-    const matches = await Match.findAll({ include: [
+    const matches = await this.model.findAll({ include: [
       { model: Team, as: 'teamHome', attributes: ['teamName'] },
       { model: Team, as: 'teamAway', attributes: ['teamName'] },
     ],
@@ -39,7 +43,7 @@ class MatchServices {
       );
     }
 
-    const promises = teamsIds.map((id) => TeamsServices.GetTeam(id));
+    const promises = teamsIds.map((id) => this.TeamServices.GetTeam(id));
     return Promise.all(promises);
   };
 
@@ -47,14 +51,14 @@ class MatchServices {
     TokenHandler.Verify(token);
     await this.verifyTeams([match.awayTeam, match.homeTeam]);
 
-    const newMatch = await Match.create(match);
+    const newMatch = await this.model.create(match) as IMatch;
     return newMatch;
   };
 
   GetById = async (id: number) : Promise<IMatch> => {
     if (!id) throw new CustomError(404, 'Id Not Found');
 
-    const match = await Match.findOne({ include: [
+    const match = await this.model.findOne({ include: [
       { model: Team, as: 'teamHome', attributes: ['teamName'] },
       { model: Team, as: 'teamAway', attributes: ['teamName'] },
     ],
@@ -70,9 +74,9 @@ class MatchServices {
     const refMatch = await this.GetById(id);
     if (refMatch.inProgress === false) throw new CustomError(401, 'Match already finished!');
 
-    const match = await Match.update(data, { where: { id } });
+    const match = await this.model.update(data, { where: { id } });
     return match;
   };
 }
 
-export default new MatchServices();
+export default MatchServices;

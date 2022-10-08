@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
+import ITeamServices from '../services/ITeamServices';
 import CustomError from '../models/CustomError';
-import TeamsServices from '../services/TeamsServices';
+import ITeamController from './ITeamController';
 
-class TeamsController {
-  private service = TeamsServices;
+class TeamsController implements ITeamController {
+  constructor(private service : ITeamServices) {}
 
   ListTeams = async (_req: Request, res: Response, next: NextFunction) => {
     try {
@@ -26,4 +27,4 @@ class TeamsController {
     }
   };
 }
-export default new TeamsController();
+export default TeamsController;

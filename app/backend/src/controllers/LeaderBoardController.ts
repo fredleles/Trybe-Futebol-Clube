@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import LeaderBoardServices from '../services/LeaderBoardServices';
+import ILeaderBoardServices from '../services/ILeaderBoardServices';
+import ILeaderBoardController from './ILeaderBoardController';
 
-class LeaderBoardController {
-  private service = LeaderBoardServices;
+class LeaderBoardController implements ILeaderBoardController {
+  constructor(private service : ILeaderBoardServices) {};
 
   GetHomeLeaders = async (_req: Request, res: Response, next: NextFunction) => {
     try {
@@ -31,4 +32,4 @@ class LeaderBoardController {
     }
   };
 }
-export default new LeaderBoardController();
+export default LeaderBoardController;

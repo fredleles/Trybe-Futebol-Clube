@@ -1,8 +1,9 @@
 import IBoard from './IBoard';
 import { IMatch } from './IMatch';
 import ITeam from './ITeam';
+import ITeamScore from './ITeamScore';
 
-export default class TeamScore {
+export default class TeamScore implements ITeamScore {
   private name: string;
   private totalPoints = 0;
   private totalGames = 0;

@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
+import IUserServices from '../services/IUserServices';
 import IUser from '../models/IUser';
-import UserServices from '../services/UserServices';
+import IUserController from './IUserController';
 
-class UserController {
-  private service = UserServices;
+class UserController implements IUserController {
+  constructor(
+    private service : IUserServices) {}
 
   Login = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -25,4 +27,4 @@ class UserController {
     }
   };
 }
-export default new UserController();
+export default UserController;

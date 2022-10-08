@@ -1,23 +1,20 @@
 import { Router } from 'express';
+import Factory from '../utils/Factory';
 import validateLogin from '../middlewares/validateLogin';
-import LeaderBoardController from './LeaderBoardController';
-import MatchController from './MatchController';
-import TeamsController from './TeamsController';
-import UserController from './UserController';
 
 const router = Router();
 
-router.post('/login', validateLogin, UserController.Login);
-router.get('/login/validate', UserController.Validate);
-router.get('/teams/:id', TeamsController.GetTeam);
-router.get('/teams', TeamsController.ListTeams);
-router.get('/matches', MatchController.ListMatches);
-router.post('/matches', MatchController.CreateMatch);
-router.patch('/matches/:id/finish', MatchController.UpdateInProgress);
-router.patch('/matches/:id', MatchController.UpdateScore);
-router.get('/leaderboard/home', LeaderBoardController.GetHomeLeaders);
-router.get('/leaderboard/away', LeaderBoardController.GetAwayLeaders);
-router.get('/leaderboard', LeaderBoardController.GetLeadersBoard);
+router.post('/login', validateLogin, Factory.GetUserController().Login);
+router.get('/login/validate', Factory.GetUserController().Validate);
+router.get('/teams/:id', Factory.GetTeamController().GetTeam);
+router.get('/teams', Factory.GetTeamController().ListTeams);
+router.get('/matches', Factory.GetMatchController().ListMatches);
+router.post('/matches', Factory.GetMatchController().CreateMatch);
+router.patch('/matches/:id/finish', Factory.GetMatchController().UpdateInProgress);
+router.patch('/matches/:id', Factory.GetMatchController().UpdateScore);
+router.get('/leaderboard/home', Factory.GetLeaderBoardController().GetHomeLeaders);
+router.get('/leaderboard/away', Factory.GetLeaderBoardController().GetAwayLeaders);
+router.get('/leaderboard', Factory.GetLeaderBoardController().GetLeadersBoard);
 router.all('*', () => { throw new Error('Invalid request'); });
 
 export default router;

@@ -4,14 +4,15 @@ import IUser from '../models/IUser';
 import CryptHandler from '../utils/CryptHandler';
 import TokenHandler from '../utils/TokenHandler';
 import ILoggedUser from '../models/ILoggedUser';
+import IUserServices from './IUserServices';
 
-class UserServices {
-  private tokenHandler = TokenHandler;
+class UserServices implements IUserServices {
+  private model = User;
 
   ValidateLogin = async (user: IUser) => {
     const { email, password } = user;
 
-    const userDB = await User.findOne({ where: { email } });
+    const userDB = await this.model.findOne({ where: { email } });
     if (!userDB) {
       throw new CustomError(401, 'Incorrect email or password');
     }
@@ -28,13 +29,13 @@ class UserServices {
       role: userDB.role,
     };
 
-    return this.tokenHandler.Sign(payload);
+    return TokenHandler.Sign(payload);
   };
 
   ValidateToken = async (token: string | undefined) => {
-    const { id } = this.tokenHandler.Verify(token) as ILoggedUser;
-    const userDB = await User.findOne({ where: { id } });
+    const { id } = TokenHandler.Verify(token) as ILoggedUser;
+    const userDB = await this.model.findOne({ where: { id } });
     return userDB?.role;
   };
 }
-export default new UserServices();
+export default UserServices;

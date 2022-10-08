@@ -1,14 +1,20 @@
+import Factory from '../utils/Factory';
 import IBoard from '../models/IBoard';
 import ITeam from '../models/ITeam';
-import MatchServices from './MatchServices';
-import TeamsServices from './TeamsServices';
-import TeamScore from '../models/TeamScore';
+import ILeaderBoardServices from './ILeaderBoardServices';
+import IMatchServices from './IMatchServices';
+import ITeamServices from './ITeamServices';
 
-class LeaderBoardServices {
+class LeaderBoardServices implements ILeaderBoardServices {
+  constructor(
+    private matchServices : IMatchServices,
+    private teamServices : ITeamServices,
+  ) {};
+
   private getScore = async (team: ITeam, matchType: object) : Promise<IBoard> => {
-    const matches = await MatchServices.List({ inProgress: false, ...matchType });
+    const matches = await this.matchServices.List({ inProgress: false, ...matchType });
 
-    return new TeamScore(team, matches).getScore();
+    return Factory.GetTeamScore(team, matches).getScore();
   };
 
   private sortList = (list: IBoard[]) => (
@@ -44,7 +50,7 @@ class LeaderBoardServices {
   };
 
   List = async (type: string) => {
-    const teamsList = await TeamsServices.List();
+    const teamsList = await this.teamServices.List() as ITeam[];
     const scorePromises = teamsList.map((team) => {
       if (type === 'home') return this.getScore(team, { homeTeam: team.id });
       if (type === 'away') return this.getScore(team, { awayTeam: team.id });
@@ -55,4 +61,4 @@ class LeaderBoardServices {
     return this.sortList(teamsScore);
   };
 }
-export default new LeaderBoardServices();
+export default LeaderBoardServices;

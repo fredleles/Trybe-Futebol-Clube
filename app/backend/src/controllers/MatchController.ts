@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
+import IMatchServices from '../services/IMatchServices';
 import CustomError from '../models/CustomError';
 import { IMatch, INewMatch } from '../models/IMatch';
-import MatchServices from '../services/MatchServices';
+import IMatchController from './IMatchController';
 
-class MatchController {
-  private service = MatchServices;
+class MatchController implements IMatchController {
+  constructor(private service : IMatchServices) {}
 
   ListMatches = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -59,4 +60,4 @@ class MatchController {
     }
   };
 }
-export default new MatchController();
+export default MatchController;
